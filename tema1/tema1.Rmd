@@ -260,6 +260,8 @@ sample(x = 1:10, size = 1)
 sample(1:10, 1)
 ```
 
+Si no escribimos el nombre de los argumentos, debemos incluirlos en el orden correcto especificado en la documentación de la función.
+
 ---
 ## Funciones
 
@@ -268,7 +270,8 @@ La función `args()` muestra los argumentos de una función
 args(sample)
 ```
 
-¡Algunas tienen valores por defecto! 
+¡Algunas tienen valores por defecto! Esto significa que si no especificamos un argumento, R usará el valor por defecto.
+
 Pregunta, ¿qué valores tiene por defecto la función `round()`?
 
 **Buena práctica**: escribir nombre de argumentos (salvo quizás el primero).

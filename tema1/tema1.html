@@ -329,7 +329,7 @@ sample(x = 1:10, size = 1)
 ```
 
 ```
-## [1] 10
+## [1] 5
 ```
 
 ``` r
@@ -338,8 +338,10 @@ sample(1:10, 1)
 ```
 
 ```
-## [1] 9
+## [1] 8
 ```
+
+Si no escribimos el nombre de los argumentos, debemos incluirlos en el orden correcto especificado en la documentación de la función.
 
 ---
 ## Funciones
@@ -355,7 +357,8 @@ args(sample)
 ## NULL
 ```
 
-¡Algunas tienen valores por defecto! 
+¡Algunas tienen valores por defecto! Esto significa que si no especificamos un argumento, R usará el valor por defecto.
+
 Pregunta, ¿qué valores tiene por defecto la función `round()`?
 
 **Buena práctica**: escribir nombre de argumentos (salvo quizás el primero).
@@ -410,7 +413,7 @@ a &lt;- gen2_1_100()
 ```
 
 ```
-## [1] 78 22
+## [1] 39 19
 ```
 
 ``` r
@@ -418,7 +421,7 @@ a
 ```
 
 ```
-## [1] 100
+## [1] 58
 ```
 
 ---
@@ -445,11 +448,11 @@ gen2_1_100()
 ```
 
 ```
-## [1] 82 34
+## [1] 67 35
 ```
 
 ```
-## [1] 116
+## [1] 102
 ```
 
 ---
@@ -462,11 +465,11 @@ gen2_1_100(10)
 ```
 
 ```
-##  [1] 16 35 29 50 85 37 56 39 53 34
+##  [1] 92 53 61 80 46 27 87 53  6 92
 ```
 
 ```
-## [1] 434
+## [1] 597
 ```
 
 
@@ -821,7 +824,7 @@ hora
 ```
 
 ```
-## [1] "2025-01-26 11:12:48 CET"
+## [1] "2025-01-26 11:36:40 CET"
 ```
 
 ``` r
@@ -882,7 +885,7 @@ milista
 ##  [1]  1  2  3  4  5  6  7  8  9 10
 ## 
 ## [[3]]
-## [1] "2025-01-26 11:12:48 CET"
+## [1] "2025-01-26 11:36:40 CET"
 ```
 
 ---
@@ -1392,7 +1395,7 @@ ifelse(x%%2==0, "Par", "Impar")
 ```
 
 ```
-## [1] "Par"   "Par"   "Par"   "Impar" "Par"
+## [1] "Par"   "Impar" "Par"   "Impar" "Par"
 ```
 
 Con `if-else` esto daría error. 
