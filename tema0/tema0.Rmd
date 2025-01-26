@@ -230,8 +230,6 @@ Adentrarnos en la ciencia de datos a través de R. Nos centraremos exclusivament
 * Análisis Descriptivo, Exploratorio, Inferencial
 
 
-$$\\[0.3cm]$$
-
 ```{r, echo=FALSE, out.width = '100%',  fig.align='center'}
 knitr::include_graphics("img/data-science-explore.png")
 ```
