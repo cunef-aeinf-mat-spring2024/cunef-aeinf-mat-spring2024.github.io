@@ -174,7 +174,7 @@ gapminder %>%
 .pull-right[ 
 - Pasamos el data frame a través del pipe (`%>%`) a la función `select()`
 - El argumento es nombre de variable (sin comillas): `lifeExp`
-- Esto de lugar a un dataframe de 1704 filas y 1 columna
+- Esto da lugar a un dataframe de 1704 filas y 1 columna
 ]
 
 ---
@@ -396,9 +396,35 @@ gapminder %>%
 
 ---
 
-## Ejercicio 1
+## Seleccionar filas
 
-Usando `slice` selecciona las tres últimas filas del dataset `gapminder`
+Cómo seleccionarías las tres últimas filas de `gapminder` usando `slice`?
+
+--
+
+```{r}
+gapminder %>%
+  slice( (n() - 2) : n()) #<<
+```
+
+---
+
+## Seleccionar filas
+
+También son útiles: `head()` y `tail()`
+
+```{r}
+gapminder %>%
+  select(country) %>%
+  head(3) #<<
+```
+
+```{r}
+gapminder %>%
+  select(country) %>%
+  tail(3) #<<
+```
+
 
 ---
 class: center, middle, inverse
@@ -462,7 +488,7 @@ knitr::include_graphics("img/logical_operators.png")
 ---
 ## Filtrado
 
-Por defecto, los múltiples argumentos de `filter` se combinan con el operador ?
+Por defecto, los múltiples argumentos de `filter` se combinan con el operador `AND`
 
 Ejemplo: seleccionar países de América que en el 2007 tuvieran esperanza de vida superior a 75 o un PIB per cápita inferior a 6000
 
@@ -506,6 +532,26 @@ filter(df, x > 1)
 filter(df, is.na(x) | x > 1)
 ```
 
+---
+
+## Valores ausentes
+
+Podemos eliminar las filas que contengan valores ausentes en una determinada variable con `!is.na()`
+
+```{r}
+df <- tibble(x = c(1, NA, 3), y = c(NA, 2, 3))
+df %>% filter(!is.na(y))
+```
+---
+
+## Valores ausentes
+
+Para eliminar todas las filas con valores ausentes, usar `drop_na()`
+
+```{r}
+df <- tibble(x = c(1, NA, 3), y = c(NA, 2, 3))
+df %>% drop_na()
+```
 
 ---
 class: center, middle, inverse
@@ -582,8 +628,9 @@ gapminder %>%
   arrange( desc(gdp) )
 ```
 
-**NOTA 1**: se puede definir más de una variable
-**NOTA 2**: en la definición, se puede usar variable recién definida
+* **NOTA 1**: se puede definir más de una variable
+
+* **NOTA 2**: en la definición, se puede usar variable recién definida
 
 ---
 
@@ -728,6 +775,56 @@ gampminder_ng <- gapminder %>%
 gampminder_ng %>% head(2)
 ```
 
+---
+
+## Agrupaciones
+
+¿Cuál es la diferencia entre estas dos formas de contar?
+
+```{r}
+library(palmerpenguins)
+
+penguins %>%
+  group_by(species, island) %>%
+  summarise(count = n())
+
+```
+
+
+---
+
+## Agrupaciones
+
+¿Cuál es la diferencia entre estas dos formas de contar?
+
+```{r}
+penguins %>% 
+  count(species, island)
+```
+---
+
+## Agrupaciones
+
+¿Qué sucede?
+
+```{r}
+penguins %>%
+  group_by(species, island) %>%
+  summarise(count = n()) %>%
+  mutate(prop = count / sum(count)) 
+```
+
+---
+
+## Agrupaciones
+
+¿Qué sucede?
+
+```{r}
+penguins %>% 
+  count(species, island) %>%
+  mutate(prop = n / sum(n))
+```
 
 
 ---
@@ -738,7 +835,7 @@ gampminder_ng %>% head(2)
 Para cada continente, calcula la proporción de países que en el año 1967 tenían esperanza de vida entre  0-10, 10-20, 20-30, etc.  en relación con el total de países del continente.
 
 
-```{r eval=FALSE}
+```{r eval=FALSE, echo=FALSE}
 gapminder %>% filter(year == 1967) %>%
   mutate(lifeExpDecade = lifeExp - lifeExp%%10) %>%
   count(continent, lifeExpDecade) %>%
@@ -746,31 +843,6 @@ gapminder %>% filter(year == 1967) %>%
   mutate(prop = n / sum(n)) 
 ```
 
----
-## Reto
-
-Calcula la proporción de países en cada continente, que en el año 1967 tenían esperanza de vida entre  0-10, 10-20, 20-30, etc.
-
-```{r eval=FALSE}
-
-gapminder %>%
-  mutate(lifeExpDecade = case_when(lifeExp >= 20 & lifeExp< 30 ~ '20',
-          lifeExp >= 30 & lifeExp< 40 ~ '30',
-          lifeExp >= 40 & lifeExp< 50 ~ '40',
-          lifeExp >= 50 & lifeExp< 60 ~ '50',
-          lifeExp >= 60 & lifeExp< 70 ~ '60',
-          lifeExp >= 70 & lifeExp< 80 ~ '70',
-          lifeExp >= 80 & lifeExp< 90 ~ '80',
-          lifeExp >= 90 & lifeExp< 100 ~ '90',
-          TRUE ~ '>100'
-          )) %>%
-  filter(year == 1967) %>%
-  count(continent, lifeExpDecade) %>%
-  group_by(continent) %>%
-  mutate(prop = n / sum(n)) 
-
-
-```
 
 ---
 
