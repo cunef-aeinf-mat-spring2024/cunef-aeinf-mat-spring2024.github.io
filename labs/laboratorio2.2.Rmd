@@ -70,8 +70,10 @@ Muestra las 10 últimas filas del dataset
 
 ## Ejercicio 5
 
-¿Cuál es la media de cigarrillos diarios entre semana que fuman los menores de 30? ¿Y los fines de semana? 
-**Nota**: Si observas `NA` determina  el posible origen de esos valores ausentes y su tratamiento,
+¿Cuál es la media de cigarrillos diarios entre semana que fuman los fumadores menores de 30? 
+¿Y la media de cigarrillos diarios entre semana que fuman los menores de 30 en general?
+
+**Nota**: Si observas `NA` determina  el posible origen de esos valores ausentes y su tratamiento.
 
 
 ## Ejercicio 6

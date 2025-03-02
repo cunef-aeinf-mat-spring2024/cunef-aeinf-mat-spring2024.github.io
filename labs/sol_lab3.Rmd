@@ -215,17 +215,21 @@ fumar %>% mutate(decada=case_when(age<=20 ~"0-20",
 
 ### Solución
 
+Podemos calcula la proporción de personas en cada grupo de salario que fuman un tipo de tabaco en concreto y seleccionar el tipo de tabaco cuya proporción sea mayor en cada grupo. Lo mismo podemos hacer con la variable `decada`.
+
 ```{r}
 fumar %>% filter(smoke == "Yes") %>% group_by(gross_income, type) %>%
   summarise(n = n()) %>%
-  mutate(prop_type = n/sum(n))
+  mutate(prop_type = n/sum(n)) %>% arrange(desc(prop_type)) %>%
+  slice(1)
 ```
 
 
 ```{r}
 fumar_new %>% filter(smoke == "Yes") %>% group_by(decada, type) %>%
   summarise(n = n()) %>%
-  mutate(prop_type = n/sum(n))
+  mutate(prop_type = n/sum(n)) %>% arrange(desc(prop_type)) %>%
+  slice(1)
 ```
 
 ## Ejercicio 10
@@ -249,7 +253,7 @@ de cada grupo.
 
 ## Ejercicio 11
 
-¿Entre la gente que no está casada, cuántos cigarros/día entre semana se fuman de media por nivel de estudios?
+¿Entre la gente fumadora que no está casada, cuántos cigarros/día entre semana se fuman de media por nivel de estudios?
 
 
 ### Solución
@@ -302,5 +306,18 @@ fumar %>% filter(!nationality %in%  c("Unknown", "Refused")) %>%
   filter(ethnicity %in% c("Unknown", "Refused")) %>%
   select(nationality, ethnicity, ethnicity_nona)
 ```
+
+
+```{r}
+fumar %>% 
+  group_by(nationality) %>% 
+  mutate(ethnicity_nona = if_else(ethnicity %in% c("Unknown", "Refused"), 
+                         calc_mode(ethnicity), 
+                         ethnicity))  %>% 
+  filter(ethnicity %in% c("Unknown", "Refused")) %>%
+  select(nationality, ethnicity, ethnicity_nona)
+```
+
+Muchos de los que no declaran su etnia, tampoco declaran su nacionalidad. 
 
 
