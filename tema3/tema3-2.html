@@ -4,7 +4,7 @@
     <title>Tema 3.2</title>
     <meta charset="utf-8" />
     <meta name="author" content="Roi Naveiro" />
-    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.28/header-attrs.js"></script>
     <link rel="stylesheet" href="ds_slides.css" type="text/css" />
   </head>
   <body>
@@ -84,7 +84,7 @@ class: center, middle, inverse
 * En el siguiente ejemplo presentamos los valores de cuatro variables (*country, year, population, cases*) de cuatro formas distintas
 
 
-```r
+``` r
 table1
 ```
 
@@ -107,7 +107,7 @@ table1
 * En el siguiente ejemplo presentamos los valores de cuatro variables (*country, year, population, cases*) de cuatro formas distintas
 
 
-```r
+``` r
 table2
 ```
 
@@ -136,7 +136,7 @@ table2
 * En el siguiente ejemplo presentamos los valores de cuatro variables (*country, year, population, cases*) de cuatro formas distintas
 
 
-```r
+``` r
 table3
 ```
 
@@ -159,7 +159,7 @@ table3
 * En el siguiente ejemplo presentamos los valores de cuatro variables (*country, year, population, cases*) de cuatro formas distintas
 
 
-```r
+``` r
 table4a
 ```
 
@@ -172,7 +172,7 @@ table4a
 ## 3 China       212258 213766
 ```
 
-```r
+``` r
 table4b
 ```
 
@@ -203,7 +203,7 @@ table4b
 * La principal ventaja es poder utilizar las herramientas de R que, usualmente, trabajan sobre vectores de valores.
 
 
-```r
+``` r
 table1 %&gt;% mutate(rate = 10000 * cases / population)
 ```
 
@@ -241,7 +241,7 @@ table1 %&gt;% mutate(rate = 10000 * cases / population)
 * Nombres de columnas son valores de variable
 
 
-```r
+``` r
 table4a
 ```
 
@@ -267,7 +267,7 @@ table4a
 # `pivot_longer()`
 
 
-```r
+``` r
 table4a %&gt;% pivot_longer(c(`1999`, `2000`), 
                          names_to = "year", values_to = "cases")
 ```
@@ -301,7 +301,7 @@ Usa `pivot_longer()` para ordenar el dataset `table4b`
 * Cada una ocupa dos filas
 
 
-```r
+``` r
 table2
 ```
 
@@ -335,7 +335,7 @@ Para ordenar, necesitamos:
 # `pivot_wider()`
 
 
-```r
+``` r
 table2 %&gt;% 
   pivot_wider(names_from = type, values_from = count)
 ```
@@ -368,7 +368,7 @@ table2 %&gt;%
 * Se puede separar en dos columnas utilizando `separate()`
 
 
-```r
+``` r
 table3
 ```
 
@@ -387,7 +387,7 @@ table3
 # Separar y unir columnas
 
 
-```r
+``` r
 table3 %&gt;% separate(rate, into = c("cases", "population"))
 ```
 
@@ -410,7 +410,7 @@ table3 %&gt;% separate(rate, into = c("cases", "population"))
 * Se puede especificar el caracter.
 
 
-```r
+``` r
 table3 %&gt;% separate(rate, into = c("cases", "population"), sep = "/")
 ```
 
@@ -432,7 +432,7 @@ table3 %&gt;% separate(rate, into = c("cases", "population"), sep = "/")
 * Además, conviene convertir el tipo de columna, de lo contrario será de tipo string.
 
 
-```r
+``` r
 table3 %&gt;% separate(rate, into = c("cases", "population"), convert = TRUE)
 ```
 
@@ -453,7 +453,7 @@ table3 %&gt;% separate(rate, into = c("cases", "population"), convert = TRUE)
 * Se puede separar usando enteros
 
 
-```r
+``` r
 table5 &lt;- 
   table3 %&gt;% separate(year, into = c("century", "year"), sep = 2)
 ```
@@ -465,7 +465,7 @@ table5 &lt;-
 * Toma como argumentos:  nueva variable, conjunto de columnas a juntar y `sep`
 
 
-```r
+``` r
 table5 %&gt;% unite(new, century, year, sep = "")
 ```
 
@@ -499,6 +499,203 @@ class: center, middle, inverse
 * Cuando los datos están repartidos en múltiples tablas, hablamos de **datos relacionales**
 
 ---
+# Keys (Llaves)
+
+* Son **variables** que se usan para conectar pares de tablas.
+
+* Dos tipos de llaves: Primary Key y Foreign Key
+
+---
+
+# ¿Qué es una **Primary Key (PK)**?
+- Es una columna (o combinación de columnas) que **identifica de manera única** cada fila en una tabla.
+- No puede tener **valores duplicados**.
+
+**Ejemplo correcto: Tabla de Clientes**
+
+| cliente_id (**PK**) | nombre  |
+|---------------------|---------|
+| 1                   | Ana     |
+| 2                   | Luis    |
+| 3                   | Marta   |
+
+---
+
+# ¿Qué es una **Foreign Key (FK)**?
+- Es una columna en una tabla que **hace referencia** a una **clave primaria (PK)** en otra tabla.
+- Puede repetirse (relación **uno-a-muchos**).
+
+**Ejemplo: Tabla de Pedidos**
+
+| pedido_id | cliente_id (**FK**) | producto |
+|-----------|---------------------|----------|
+| 1001      | 1                   | Libro    |
+| 1002      | 2                   | Lápiz    |
+| 1003      | 1                   | Cuaderno |
+
+Varios pedidos pueden ser del **mismo cliente** (`cliente_id = 1`).
+
+---
+
+## Relación 
+
+Una PK y su FK en otra tabla forman una **relación**.
+
+* Normalmente, **añadimos información de la tabla con la Clave Primaria (PK)**  
+* A la **tabla que tiene la Clave Foránea (FK)**.
+
+
+| Tabla con **FK**            | Tabla con **PK**            |
+|-----------------------------|-----------------------------|
+| Contiene **referencias**     | Contiene **datos únicos**   |
+| Necesita **más información** | Aporta **información extra** |
+| Es la tabla **dependiente**  | Es la tabla **maestra**     |
+
+* No obstante,como veremos después, podemos hacer otras cosas.
+---
+
+## Ejemplo
+
+
+``` r
+library(dplyr)
+
+clientes &lt;- tibble(
+  cliente_id = c(1, 2, 3),
+  nombre = c("Ana", "Luis", "Marta")
+)
+
+pedidos &lt;- tibble(
+  pedido_id = c(1001, 1002, 1003),
+  cliente_id = c(1, 2, 1),
+  producto = c("Libro", "Lápiz", "Cuaderno")
+)
+
+left_join(pedidos, clientes, by = "cliente_id")
+```
+
+```
+## # A tibble: 3 × 4
+##   pedido_id cliente_id producto nombre
+##       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt; 
+## 1      1001          1 Libro    Ana   
+## 2      1002          2 Lápiz    Luis  
+## 3      1003          1 Cuaderno Ana
+```
+
+Todo bien porque cliente_id es único en clientes y el join funciona correctamente.
+
+
+---
+# Keys (Llaves)
+
+Una vez identificada una llave primaria, es útil comprobar que es correcta
+
+
+``` r
+planes %&gt;% 
+  count(tailnum) %&gt;% 
+  filter(n &gt; 1)
+```
+
+```
+## # A tibble: 0 × 2
+## # ℹ 2 variables: tailnum &lt;chr&gt;, n &lt;int&gt;
+```
+
+
+
+``` r
+weather %&gt;% 
+  count(year, month, day, hour, origin) %&gt;% 
+  filter(n &gt; 1)
+```
+
+```
+## # A tibble: 3 × 6
+##    year month   day  hour origin     n
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;int&gt;
+## 1  2013    11     3     1 EWR        2
+## 2  2013    11     3     1 JFK        2
+## 3  2013    11     3     1 LGA        2
+```
+
+---
+# Keys (Llaves)
+
+* A veces no existen llaves primarias! No hay una combinación de variables que identifique unívocamente cada observación.
+
+* Ejemplo, `flights`.
+
+Útil añadir una... **llave surrogada**
+
+
+``` r
+flights_key &lt;- flights %&gt;% mutate(key = row_number())
+```
+
+
+
+``` r
+flights_key %&gt;% 
+  count(key) %&gt;% 
+  filter(n &gt; 1)
+```
+
+```
+## # A tibble: 0 × 2
+## # ℹ 2 variables: key &lt;int&gt;, n &lt;int&gt;
+```
+
+---
+# Problemas si la PK se repite
+
+Si `cliente_id` **se repite** en la tabla `clientes`:
+
+| cliente_id (**PK?**) | nombre  |
+|----------------------|---------|
+| 1                    | Ana     |
+| 1                    | Alicia  |
+| 2                    | Luis    |
+| 3                    | Marta   |
+
+Recuerda, la tabla pedidos era
+
+| pedido_id | cliente_id (**FK**) | producto |
+|-----------|---------------------|----------|
+| 1001      | 1                   | Libro    |
+| 1002      | 2                   | Lápiz    |
+| 1003      | 1                   | Cuaderno |
+
+---
+
+# Problemas si la PK se repite
+
+**Problema al hacer el join**:
+
+
+
+
+``` r
+# Join que genera duplicados no esperados
+left_join(pedidos, clientes, by = "cliente_id")
+```
+
+```
+## # A tibble: 5 × 4
+##   pedido_id cliente_id producto nombre
+##       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt; 
+## 1      1001          1 Libro    Ana   
+## 2      1001          1 Libro    Alicia
+## 3      1002          2 Lápiz    Luis  
+## 4      1003          1 Cuaderno Ana   
+## 5      1003          1 Cuaderno Alicia
+```
+
+
+
+
+---
 # Datos relacionales
 
 En `tidyverse`, existen tres familias de verbos para trabajar con datos relacionales:
@@ -529,96 +726,6 @@ Utilizaremos este conjunto de datos para aprender sobre datos relacionales. Cont
 
 &lt;img src="img/relations_NYC.png" width="100%" style="display: block; margin: auto;" /&gt;
 
----
-# Keys (Llaves)
-
-* Son **variables** que se usan para conectar pares de tablas.
-
-* Conjunto de variables que identifican unívocamente una observación.
-
-* ¿Cuáles son las llaves de cada una de las tablas de datos de `nycflights13`?
-
----
-# Keys (Llaves)
-
-Dos tipos de llaves:
-
-* Primary Key: variable o conjunto de variables que identifica unívocamente una observación en su propia tabla.
-
-* Foreign Key: variable o conjunto de variables de una tabla que se corresponden con la Primary Key de otra tabla.
-
-
-* ¿Ejemplo en `nycflights13`?
-
----
-# Keys (Llaves)
-
-Una vez identificada una llave primaria, es útil comprobar que es correcta
-
-
-```r
-planes %&gt;% 
-  count(tailnum) %&gt;% 
-  filter(n &gt; 1)
-```
-
-```
-## # A tibble: 0 × 2
-## # ℹ 2 variables: tailnum &lt;chr&gt;, n &lt;int&gt;
-```
-
-
-
-```r
-weather %&gt;% 
-  count(year, month, day, hour, origin) %&gt;% 
-  filter(n &gt; 1)
-```
-
-```
-## # A tibble: 3 × 6
-##    year month   day  hour origin     n
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;int&gt;
-## 1  2013    11     3     1 EWR        2
-## 2  2013    11     3     1 JFK        2
-## 3  2013    11     3     1 LGA        2
-```
-
----
-# Keys (Llaves)
-
-* A veces no existen llaves primarias! No hay una combinación de variables que identifique unívocamente cada observación.
-
-* Ejemplo, `flights`.
-
-Útil añadir una... **llave surrogada**
-
-
-```r
-flights_key &lt;- flights %&gt;% mutate(key = row_number())
-```
-
-
-
-```r
-flights_key %&gt;% 
-  count(key) %&gt;% 
-  filter(n &gt; 1)
-```
-
-```
-## # A tibble: 0 × 2
-## # ℹ 2 variables: key &lt;int&gt;, n &lt;int&gt;
-```
-
----
-# Keys (Llaves)
-
-* Una *primary key* y su *foreign key* en otra tabla forman una **relación**.
-
-* Usualmente las relaciones son 1 a varios.
-
-* Ejemplo: cada vuelo tiene un único avión, pero cada avión realiza muchos vuelos.
 
 ---
 class: center, middle, inverse
@@ -637,7 +744,7 @@ variables de una tabla a otra.
 * Añade nuevas variables a la derecha!! Trabajamos con versión reducida
 
 
-```r
+``` r
 flights2 &lt;- flights %&gt;% 
   select(year:day, hour, origin, dest, tailnum, carrier) 
 flights2 %&gt;% slice(1:3)
@@ -658,7 +765,7 @@ flights2 %&gt;% slice(1:3)
 Para entender su funcionamiento, trabajamos con datos artificiales
 
 
-```r
+``` r
 x &lt;- tribble(
   ~key, ~val_x,
      1, "x1",
@@ -693,7 +800,7 @@ La salida es un nuevo data frame con llave, variable x y variable y.
 Las filas no emparejadas no aparecen!!
 
 
-```r
+``` r
 x %&gt;% 
   inner_join(y, by = "key")
 ```
@@ -729,7 +836,7 @@ Tres tipos:
 Predice la respuesta de los siguientes códigos
 
 
-```r
+``` r
 x %&gt;% 
   left_join(y, by = "key")
 
@@ -746,7 +853,7 @@ x %&gt;%
 Predice la respuesta de los siguientes códigos
 
 
-```r
+``` r
 x %&gt;% 
   left_join(y, by = "key")
 ```
@@ -760,7 +867,7 @@ x %&gt;%
 ## 3     3 x3    &lt;NA&gt;
 ```
 
-```r
+``` r
 x %&gt;% 
   right_join(y, by = "key")
 ```
@@ -780,7 +887,7 @@ x %&gt;%
 Predice la respuesta de los siguientes códigos
 
 
-```r
+``` r
 x %&gt;% 
   full_join(y, by = "key")
 ```
@@ -811,7 +918,7 @@ x %&gt;%
 Caso típico!
 
 
-```r
+``` r
 x &lt;- tribble(
   ~key, ~val_x,
      1, "x1",
@@ -842,7 +949,7 @@ left_join(x, y, by = "key")
 
 
 
-```r
+``` r
 left_join(x, y, by = "key")
 ```
 
@@ -859,10 +966,10 @@ left_join(x, y, by = "key")
 ---
 # Llaves duplicadas - Caso 2
 
-Error, llave no identifica unívocamente las observaciones
+Error, **llave primaria no identifica unívocamente las observaciones**
 
 
-```r
+``` r
 x &lt;- tribble(
   ~key, ~val_x,
      1, "x1",
@@ -886,7 +993,7 @@ y &lt;- tribble(
 Todas las combinaciones!
 
 
-```r
+``` r
 left_join(x, y, by = "key")
 ```
 
@@ -931,7 +1038,7 @@ ambas tablas
 * ¿Qué variables se utilizarán en el siguiente código?
 
 
-```r
+``` r
 flights2 %&gt;% 
   left_join(weather)
 ```
@@ -944,7 +1051,7 @@ flights2 %&gt;%
 
 
 
-```r
+``` r
 flights2 %&gt;% 
   left_join(planes, by = "tailnum")
 ```
@@ -958,7 +1065,7 @@ variable `b` de la segunda.
 * ¿Qué pasa?
 
 
-```r
+``` r
 flights2 %&gt;% 
   left_join(airports, c("dest" = "faa"))
 ```
@@ -1017,7 +1124,7 @@ Dos tipos
 esté entre los 10 destinos con más observaciones.
 
 
-```r
+``` r
 top_dest &lt;- flights %&gt;% count(dest) %&gt;% arrange(desc(n)) %&gt;% 
   slice(1:10)
 ```
@@ -1033,7 +1140,7 @@ top_dest &lt;- flights %&gt;% count(dest) %&gt;% arrange(desc(n)) %&gt;%
 # `anti_join(x,y)`
 Útil para diagnosticar discordancias.
 
-```r
+``` r
 flights %&gt;%
   anti_join(planes, by = "tailnum") %&gt;%
   count(tailnum) %&gt;% arrange(desc(n))
@@ -1077,7 +1184,7 @@ Tratan observaciones como conjuntos:
 # Set operations
 
 
-```r
+``` r
 df1 &lt;- tribble(
   ~x, ~y,
    1,  1,
@@ -1095,7 +1202,7 @@ df2 &lt;- tribble(
 # Set operations
 
 
-```r
+``` r
 intersect(df1, df2)
 ```
 
@@ -1106,7 +1213,7 @@ intersect(df1, df2)
 ## 1     1     1
 ```
 
-```r
+``` r
 union(df1, df2)
 ```
 
@@ -1119,7 +1226,7 @@ union(df1, df2)
 ## 3     1     2
 ```
 
-```r
+``` r
 setdiff(df1, df2)
 ```
 

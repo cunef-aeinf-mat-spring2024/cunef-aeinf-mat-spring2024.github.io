@@ -312,58 +312,82 @@ class: center, middle, inverse
 * Cuando los datos están repartidos en múltiples tablas, hablamos de **datos relacionales**
 
 ---
-# Datos relacionales
-
-En `tidyverse`, existen tres familias de verbos para trabajar con datos relacionales:
-
-* **Mutating joins**: añaden nuevas variables a una tabla de datos, procedentes de observaciones coincidentes de otra tabla.
-
-* **Filtering joins**: filtran observaciones de una base de datos basándose en si coinciden o no con las observaciones de otra tabla.
-
-* **Set operations**: utilizan las observaciones como si fueran elementos de un conjunto.
-
----
-# `nycflights13`
-
-Utilizaremos este conjunto de datos para aprender sobre datos relacionales. Contiene las siguientes tablas:
-
-* `airlines`:  Nombres de aerolíneas
-
-* `airports`: Información sobre cada aeropuerto
-
-* `planes`: Información sobre cada avión
-
-* `weather`: Información climática en cada aeropuerto de NYC a cada hora
-
-* `flights`: Información sobre todos los vuelos que partieron de NYC en 2013
-
----
-# `nycflights13`
-
-```{r, echo=FALSE, out.width = '100%',  fig.align='center'}
-knitr::include_graphics("img/relations_NYC.png")
-```
-
----
 # Keys (Llaves)
 
 * Son **variables** que se usan para conectar pares de tablas.
 
-* Conjunto de variables que identifican unívocamente una observación.
-
-* ¿Cuáles son las llaves de cada una de las tablas de datos de `nycflights13`?
+* Dos tipos de llaves: Primary Key y Foreign Key
 
 ---
-# Keys (Llaves)
 
-Dos tipos de llaves:
+# ¿Qué es una **Primary Key (PK)**?
+- Es una columna (o combinación de columnas) que **identifica de manera única** cada fila en una tabla.
+- No puede tener **valores duplicados**.
 
-* Primary Key: variable o conjunto de variables que identifica unívocamente una observación en su propia tabla.
+**Ejemplo correcto: Tabla de Clientes**
 
-* Foreign Key: variable o conjunto de variables de una tabla que se corresponden con la Primary Key de otra tabla.
+| cliente_id (**PK**) | nombre  |
+|---------------------|---------|
+| 1                   | Ana     |
+| 2                   | Luis    |
+| 3                   | Marta   |
+
+---
+
+# ¿Qué es una **Foreign Key (FK)**?
+- Es una columna en una tabla que **hace referencia** a una **clave primaria (PK)** en otra tabla.
+- Puede repetirse (relación **uno-a-muchos**).
+
+**Ejemplo: Tabla de Pedidos**
+
+| pedido_id | cliente_id (**FK**) | producto |
+|-----------|---------------------|----------|
+| 1001      | 1                   | Libro    |
+| 1002      | 2                   | Lápiz    |
+| 1003      | 1                   | Cuaderno |
+
+Varios pedidos pueden ser del **mismo cliente** (`cliente_id = 1`).
+
+---
+
+## Relación 
+
+Una PK y su FK en otra tabla forman una **relación**.
+
+* Normalmente, **añadimos información de la tabla con la Clave Primaria (PK)**  
+* A la **tabla que tiene la Clave Foránea (FK)**.
 
 
-* ¿Ejemplo en `nycflights13`?
+| Tabla con **FK**            | Tabla con **PK**            |
+|-----------------------------|-----------------------------|
+| Contiene **referencias**     | Contiene **datos únicos**   |
+| Necesita **más información** | Aporta **información extra** |
+| Es la tabla **dependiente**  | Es la tabla **maestra**     |
+
+* No obstante,como veremos después, podemos hacer otras cosas.
+---
+
+## Ejemplo
+
+```{r}
+library(dplyr)
+
+clientes <- tibble(
+  cliente_id = c(1, 2, 3),
+  nombre = c("Ana", "Luis", "Marta")
+)
+
+pedidos <- tibble(
+  pedido_id = c(1001, 1002, 1003),
+  cliente_id = c(1, 2, 1),
+  producto = c("Libro", "Lápiz", "Cuaderno")
+)
+
+left_join(pedidos, clientes, by = "cliente_id")
+```
+
+Todo bien porque cliente_id es único en clientes y el join funciona correctamente.
+
 
 ---
 # Keys (Llaves)
@@ -404,13 +428,88 @@ flights_key %>%
 ```
 
 ---
-# Keys (Llaves)
+# Problemas si la PK se repite
 
-* Una *primary key* y su *foreign key* en otra tabla forman una **relación**.
+Si `cliente_id` **se repite** en la tabla `clientes`:
 
-* Usualmente las relaciones son 1 a varios.
+| cliente_id (**PK?**) | nombre  |
+|----------------------|---------|
+| 1                    | Ana     |
+| 1                    | Alicia  |
+| 2                    | Luis    |
+| 3                    | Marta   |
 
-* Ejemplo: cada vuelo tiene un único avión, pero cada avión realiza muchos vuelos.
+Recuerda, la tabla pedidos era
+
+| pedido_id | cliente_id (**FK**) | producto |
+|-----------|---------------------|----------|
+| 1001      | 1                   | Libro    |
+| 1002      | 2                   | Lápiz    |
+| 1003      | 1                   | Cuaderno |
+
+---
+
+# Problemas si la PK se repite
+
+**Problema al hacer el join**:
+
+```{r, echo=F}
+# Tabla de clientes con clave primaria duplicada
+clientes <- tibble(
+  cliente_id = c(1, 1, 2, 3),
+  nombre = c("Ana", "Alicia", "Luis", "Marta")
+)
+
+# Tabla de pedidos
+pedidos <- tibble(
+  pedido_id = c(1001, 1002, 1003),
+  cliente_id = c(1, 2, 1),
+  producto = c("Libro", "Lápiz", "Cuaderno")
+)
+
+```
+
+```{r}
+# Join que genera duplicados no esperados
+left_join(pedidos, clientes, by = "cliente_id")
+```
+
+
+
+
+---
+# Datos relacionales
+
+En `tidyverse`, existen tres familias de verbos para trabajar con datos relacionales:
+
+* **Mutating joins**: añaden nuevas variables a una tabla de datos, procedentes de observaciones coincidentes de otra tabla.
+
+* **Filtering joins**: filtran observaciones de una base de datos basándose en si coinciden o no con las observaciones de otra tabla.
+
+* **Set operations**: utilizan las observaciones como si fueran elementos de un conjunto.
+
+---
+# `nycflights13`
+
+Utilizaremos este conjunto de datos para aprender sobre datos relacionales. Contiene las siguientes tablas:
+
+* `airlines`:  Nombres de aerolíneas
+
+* `airports`: Información sobre cada aeropuerto
+
+* `planes`: Información sobre cada avión
+
+* `weather`: Información climática en cada aeropuerto de NYC a cada hora
+
+* `flights`: Información sobre todos los vuelos que partieron de NYC en 2013
+
+---
+# `nycflights13`
+
+```{r, echo=FALSE, out.width = '100%',  fig.align='center'}
+knitr::include_graphics("img/relations_NYC.png")
+```
+
 
 ---
 class: center, middle, inverse
@@ -584,7 +683,7 @@ left_join(x, y, by = "key")
 ---
 # Llaves duplicadas - Caso 2
 
-Error, llave no identifica unívocamente las observaciones
+Error, **llave primaria no identifica unívocamente las observaciones**
 
 ```{r}
 x <- tribble(
