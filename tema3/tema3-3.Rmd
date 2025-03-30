@@ -270,16 +270,22 @@ str_view(x, "\\bcat\\b")
 x = c("B12", "Eslava", "Ocho y Medio")
 str_view(x, "\\d")
 ```
+
 ---
 ## Strings: expresiones regulares
 
-OJO
+
+- En R, **`\` es un carácter reservado**: se usa para escribir secuencias especiales como `\n` o `\t`.
+
+- Por eso, para escribir una barra invertida literal, usamos doble barra: `\\`
+
+- Así, R procesa `\\d` como la expresión regular `\d`: *“un dígito”*.
+
 
 ```{r}
 writeLines("\\d")
 ```
 
-Cuando queremso escribir explícitamente el símbolo \ en una string, necesitamos escribir \\, pues \ es un caracter reservado.
 
 ---
 ## Strings: expresiones regulares
@@ -695,11 +701,18 @@ update(datetime, year = 2023)
 ---
 ## Fechas y horas - Operaciones
 
-Para operar con fechas, necesitaremos:
+Cuando trabajamos con fechas y horas, muchas veces queremos hacer **operaciones** del estilo:
 
-* **Duraciones**: número exacto de segundos
+- Sumar o restar tiempo (ej: "¿qué fecha será en 3 semanas?")
 
-* **Períodos**: otras unidades como meses y semanas
+- Medir diferencias entre fechas (ej: "¿cuántos días pasaron?")
+
+
+Para esto, tenemos dos herramientas en lubridate:
+
+- Duraciones: Tiempo exacto en segundos (útil para medir intervalos exactos)
+
+- Períodos: Unidades como días, meses, años (útiles para sumar o restar en lógica de calendario)
 
 
 ---
@@ -712,7 +725,10 @@ mi_edad <- today() - ymd("1993 May 17")
 mi_edad
 ```
 
-Este objeto alberga tiempos en segundos, minutos, horas, días, etc. Ambiguo
+- Este objeto representa una diferencia de tiempo, por defecto en días,
+aunque internamente puede expresarse en otras unidades (segundos, minutos, horas…).
+
+- Ambiguo y limitado: No siempre es claro ni flexible para hacer operaciones adicionales.
 
 ---
 ## Fechas y horas - Operaciones con duraciones
@@ -763,7 +779,19 @@ año_pasado
 ---
 ## Fechas y horas - Operaciones con períodos
 
-Más intuitivo
+- En lugar de duraciones, podemos trabajar con períodos.
+
+- Los períodos representan cantidades de tiempo en unidades del calendario (como meses o años) y respetan su variabilidad, mientras que las duraciones son intervalos exactos medidos en segundos.
+
+
+```{r}
+ymd("2020-01-1") + months(1)   # "2020-02-29" (respeta el calendario)
+ymd("2020-01-1") + dmonths(1)  # "2020-03-02" (30.44 días exactos)
+```
+
+---
+## Fechas y horas - Operaciones con períodos
+
 
 ```{r}
 seconds(15)
@@ -775,7 +803,7 @@ days(7)
 ---
 ## Fechas y horas - Operaciones con períodos
 
-Más intuitivo
+A veces más intuitivo
 
 ```{r}
 months(1:6)

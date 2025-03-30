@@ -77,7 +77,7 @@ Comenta lo que observas.
 
 ## Ejercicio 5
 
-Recrea el siguiente gráfico. 
+Recrea el gráfico que se muestra en el laboratorio de la página web de la asignatura.
 
 **Pista**: para ordenar los major según salario mediano, deberás usar
 `fct_reorder`. Busca en internet su uso.
