@@ -69,12 +69,10 @@ Bienvenido al sitio web de la asignatura de **Análisis y Explotación de la Inf
 ### Tema 4 : Modelización
   - [Diapositivas](./tema4/tema4.html)
 
-<!--
 
 ### Tema 5 : Comunicación de Resultados
   - [Diapositivas](./tema5/tema5.html)
 
--->
 
 
 ## **Laboratorios**
